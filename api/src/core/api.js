@@ -19,15 +19,16 @@ import { friendlyServiceName } from "../processing/service-alias.js";
 import { verifyStream } from "../stream/manage.js";
 import { createResponse, normalizeRequest, getIP } from "../processing/request.js";
 import { setupTunnelHandler } from "./itunnel.js";
+import { handleVideoRequest, listAvailableVideos } from "../video/tunnel.js";
 
 import * as APIKeys from "../security/api-keys.js";
 import * as Cookies from "../processing/cookie/manager.js";
 import * as YouTubeSession from "../processing/helpers/youtube-session.js";
 
 const git = {
-  branch: process.env.GIT_BRANCH || (await getBranch()).catch(() => "unknown"),
-  commit: process.env.COMMIT_HASH || (await getCommit()).catch(() => "unknown"),
-  remote: process.env.GIT_REMOTE || (await getRemote()).catch(() => "unknown"),
+  branch: process.env.GIT_BRANCH || (await getBranch().catch(() => "unknown")),
+  commit: process.env.COMMIT_HASH || (await getCommit().catch(() => "unknown")),
+  remote: process.env.GIT_REMOTE || (await getRemote().catch(() => "unknown")),
 };
 
 
@@ -278,6 +279,24 @@ export const runAPI = async (express, app, __dirname, isPrimary = true) => {
         } catch {
             fail(res, "error.api.generic");
         }
+    });
+
+    // Video tunnel generation endpoint
+    app.get('/videos/request', async (req, res) => {
+        const videoName = req.query.name;
+        const expiration = parseInt(req.query.expiration) || 60;
+        
+        if (!videoName) {
+            return fail(res, "error.api.video.missing_name");
+        }
+        
+        const result = handleVideoRequest(videoName, { expiration });
+        return res.status(result.status).json(result.body);
+    });
+
+    app.get('/videos/list', async (req, res) => {
+        const result = listAvailableVideos();
+        return res.status(result.status).json(result.body);
     });
 
     app.use('/tunnel', cors({
