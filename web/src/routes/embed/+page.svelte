@@ -60,6 +60,7 @@
         {#if videoUrl}
             <video controls width={videoDimensions.width} height={videoDimensions.height}>
                 <source src={videoUrl} type={videoType} />
+                <track kind="captions" label="No captions available" />
                 Your browser does not support the video tag.
             </video>
         {:else if thumbnailUrl}

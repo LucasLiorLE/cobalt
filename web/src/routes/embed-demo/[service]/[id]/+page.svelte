@@ -3,7 +3,7 @@
     
     export let data: PageData;
     
-    $: ({ videoData, originalUrl, service, id } = data);
+    $: ({ videoData, service, id, originalUrl } = data);
     
     // Extract video metadata for display
     $: title = videoData?.title || `${service.toUpperCase()} Video ${id}`;
@@ -23,7 +23,7 @@
     <meta property="og:description" content={description} />
     <meta property="og:type" content="video.other" />
     <meta property="og:site_name" content="Cobalt" />
-    <meta property="og:url" content="/embed/{service}/{id}" />
+    <meta property="og:url" content="/embed-demo/{service}/{id}" />
     
     <!-- Video-specific Open Graph tags -->
     {#if videoUrl}
@@ -78,6 +78,11 @@
 </svelte:head>
 
 <div class="embed-container">
+    <div class="demo-banner">
+        <h2>🎥 Discord Embed Demo</h2>
+        <p>This is a demonstration of Cobalt's Discord video embed functionality.</p>
+    </div>
+    
     <div class="video-info">
         <div class="header">
             <h1>{title}</h1>
@@ -88,27 +93,16 @@
         
         <p class="description">{description}</p>
         
-        {#if videoUrl}
-            <div class="video-wrapper">
-                <video 
-                    controls 
-                    preload="metadata"
-                    width={videoDimensions.width} 
-                    height={videoDimensions.height}
-                    poster={thumbnailUrl}
-                >
-                    <source src={videoUrl} type={videoType} />
-                    <track kind="captions" label="No captions available" />
-                    Your browser does not support the video tag.
-                </video>
-            </div>
-        {:else if thumbnailUrl}
+        {#if thumbnailUrl}
             <div class="thumbnail-wrapper">
                 <img src={thumbnailUrl} alt={title} />
                 <div class="play-overlay">
                     <svg width="64" height="64" viewBox="0 0 24 24" fill="white">
                         <path d="M8 5v14l11-7z"/>
                     </svg>
+                </div>
+                <div class="demo-note">
+                    This is a demo thumbnail. In a real embed, this would link to the actual video.
                 </div>
             </div>
         {/if}
@@ -118,10 +112,48 @@
             {#if duration}
                 <div class="duration">{duration}s</div>
             {/if}
+            <div class="demo-badge">DEMO</div>
+        </div>
+        
+        <div class="embed-info">
+            <h3>Generated Meta Tags</h3>
+            <div class="meta-tags">
+                <div class="tag">
+                    <code>og:title</code>
+                    <span>{title}</span>
+                </div>
+                <div class="tag">
+                    <code>og:description</code>
+                    <span>{description}</span>
+                </div>
+                <div class="tag">
+                    <code>og:video:url</code>
+                    <span>{videoUrl}</span>
+                </div>
+                <div class="tag">
+                    <code>og:video:type</code>
+                    <span>{videoType}</span>
+                </div>
+                <div class="tag">
+                    <code>og:video:width</code>
+                    <span>{videoDimensions.width}</span>
+                </div>
+                <div class="tag">
+                    <code>og:video:height</code>
+                    <span>{videoDimensions.height}</span>
+                </div>
+                {#if thumbnailUrl}
+                    <div class="tag">
+                        <code>og:image</code>
+                        <span>{thumbnailUrl}</span>
+                    </div>
+                {/if}
+            </div>
         </div>
         
         <div class="footer">
-            <p><strong>Original:</strong> <a href={originalUrl} target="_blank" rel="noopener">{originalUrl}</a></p>
+            <p><strong>Demo URL:</strong> <code>/embed-demo/{service}/{id}</code></p>
+            <p><strong>Real Usage:</strong> Replace <code>embed-demo</code> with <code>embed</code> for production</p>
             <p><strong>Powered by:</strong> <a href="/" target="_blank" rel="noopener">Cobalt</a></p>
         </div>
     </div>
@@ -135,6 +167,26 @@
         background: var(--background, #000);
         color: var(--font, #fff);
         font-family: 'Inter', system-ui, sans-serif;
+    }
+    
+    .demo-banner {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 12px;
+        text-align: center;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+    
+    .demo-banner h2 {
+        margin: 0 0 10px 0;
+        font-size: 1.5em;
+    }
+    
+    .demo-banner p {
+        margin: 0;
+        opacity: 0.9;
     }
     
     .header {
@@ -162,23 +214,19 @@
         line-height: 1.4;
     }
     
-    .video-wrapper, .thumbnail-wrapper {
+    .thumbnail-wrapper {
         position: relative;
         margin-bottom: 20px;
         border-radius: 12px;
         overflow: hidden;
         background: #111;
+        cursor: pointer;
     }
     
-    video, img {
+    img {
         width: 100%;
         height: auto;
         display: block;
-    }
-    
-    .thumbnail-wrapper {
-        position: relative;
-        cursor: pointer;
     }
     
     .play-overlay {
@@ -197,11 +245,25 @@
         transform: translate(-50%, -50%) scale(1.1);
     }
     
+    .demo-note {
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        right: 10px;
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 0.8em;
+        text-align: center;
+    }
+    
     .meta-info {
         display: flex;
         gap: 10px;
-        margin-bottom: 20px;
+        margin-bottom: 30px;
         align-items: center;
+        flex-wrap: wrap;
     }
     
     .service-badge {
@@ -223,6 +285,68 @@
         font-family: monospace;
     }
     
+    .demo-badge {
+        background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+        color: white;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.8em;
+        font-weight: 600;
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+    }
+    
+    .embed-info {
+        background: var(--background-2, #111);
+        border: 1px solid var(--border, #333);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .embed-info h3 {
+        margin: 0 0 15px 0;
+        color: var(--font, #fff);
+        font-size: 1.1em;
+    }
+    
+    .meta-tags {
+        display: grid;
+        gap: 8px;
+    }
+    
+    .tag {
+        display: grid;
+        grid-template-columns: 150px 1fr;
+        gap: 10px;
+        align-items: start;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--border, #333);
+    }
+    
+    .tag:last-child {
+        border-bottom: none;
+    }
+    
+    .tag code {
+        background: var(--background, #000);
+        color: var(--primary, #007bff);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 0.8em;
+        font-weight: 600;
+    }
+    
+    .tag span {
+        color: var(--gray, #ccc);
+        font-size: 0.9em;
+        word-break: break-all;
+    }
+    
     .footer {
         font-size: 0.85em;
         color: var(--gray, #888);
@@ -235,10 +359,17 @@
         margin: 8px 0;
     }
     
+    .footer code {
+        background: var(--background-2, #111);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: monospace;
+        color: var(--primary, #007bff);
+    }
+    
     .footer a {
         color: var(--primary, #007bff);
         text-decoration: none;
-        word-break: break-all;
     }
     
     .footer a:hover {
@@ -252,6 +383,11 @@
         
         .video-info h1 {
             font-size: 1.3em;
+        }
+        
+        .tag {
+            grid-template-columns: 1fr;
+            gap: 5px;
         }
         
         .meta-info {

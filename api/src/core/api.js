@@ -319,11 +319,14 @@ export const runAPI = async (express, app, __dirname, isPrimary = true) => {
                 isEmbed: true  // Flag to indicate this is for embed purposes
             });
 
-            // Transform the result for embed use
-            const { createEmbedResponse } = await import("../processing/embed-response.js");
-            const embedResult = createEmbedResponse(result.body, normalizedRequest.url);
+            // Transform the result for embed use if this is an embed request
+            if (normalizedRequest.isEmbed || req.path === '/embed') {
+                const { createEmbedResponse } = await import("../processing/embed-response.js");
+                const embedResult = createEmbedResponse(result.body, normalizedRequest.url);
+                return res.status(embedResult.status).json(embedResult.body);
+            }
             
-            res.status(embedResult.status).json(embedResult.body);
+            res.status(result.status).json(result.body);
         } catch {
             fail(res, "error.api.generic");
         }
