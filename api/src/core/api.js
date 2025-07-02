@@ -280,6 +280,55 @@ export const runAPI = async (express, app, __dirname, isPrimary = true) => {
         }
     });
 
+    // Embed endpoint for Discord video embeds
+    app.post('/embed', apiLimiter, async (req, res) => {
+        const request = req.body;
+
+        if (!request.url) {
+            return fail(res, "error.api.link.missing");
+        }
+
+        const { success, data: normalizedRequest } = await normalizeRequest(request);
+        if (!success) {
+            return fail(res, "error.api.invalid_body");
+        }
+
+        const parsed = extract(
+            normalizedRequest.url,
+            APIKeys.getAllowedServices(req.rateLimitKey),
+        );
+
+        if (!parsed) {
+            return fail(res, "error.api.link.invalid");
+        }
+
+        if ("error" in parsed) {
+            let context;
+            if (parsed?.context) {
+                context = parsed.context;
+            }
+            return fail(res, `error.api.${parsed.error}`, context);
+        }
+
+        try {
+            const result = await match({
+                host: parsed.host,
+                patternMatch: parsed.patternMatch,
+                params: normalizedRequest,
+                authType: req.authType ?? "none",
+                isEmbed: true  // Flag to indicate this is for embed purposes
+            });
+
+            // Transform the result for embed use
+            const { createEmbedResponse } = await import("../processing/embed-response.js");
+            const embedResult = createEmbedResponse(result.body, normalizedRequest.url);
+            
+            res.status(embedResult.status).json(embedResult.body);
+        } catch {
+            fail(res, "error.api.generic");
+        }
+    });
+
     app.use('/tunnel', cors({
         methods: ['GET'],
         exposedHeaders: [
