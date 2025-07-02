@@ -25,10 +25,11 @@ import * as Cookies from "../processing/cookie/manager.js";
 import * as YouTubeSession from "../processing/helpers/youtube-session.js";
 
 const git = {
-    branch: await getBranch(),
-    commit: await getCommit(),
-    remote: await getRemote(),
-}
+  branch: process.env.GIT_BRANCH || (await getBranch()).catch(() => "unknown"),
+  commit: process.env.COMMIT_HASH || (await getCommit()).catch(() => "unknown"),
+  remote: process.env.GIT_REMOTE || (await getRemote()).catch(() => "unknown"),
+};
+
 
 // const version = await getVersion();
 const version = process.env.VERSION || "dev";

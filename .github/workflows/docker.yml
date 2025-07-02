@@ -59,4 +59,5 @@ jobs:
           cache-to: type=gha,mode=max
           build-args: |
             COMMIT_HASH=${{ steps.release-meta.outputs.commit_short }}
-            VERSION=${{ steps.release-meta.outputs.version }}
+            GIT_BRANCH=main
+            GIT_REMOTE=origin
