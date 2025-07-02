@@ -57,3 +57,6 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          build-args: |
+            COMMIT_HASH=${{ steps.release-meta.outputs.commit_short }}
+            VERSION=${{ steps.release-meta.outputs.version }}

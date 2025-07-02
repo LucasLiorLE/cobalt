@@ -30,7 +30,10 @@ const git = {
     remote: await getRemote(),
 }
 
-const version = await getVersion();
+// const version = await getVersion();
+const version = process.env.VERSION || "dev";
+const commit = process.env.COMMIT_HASH || "unknown";
+console.log(`Version: ${version}, Commit: ${commit}`);
 
 const acceptRegex = /^application\/json(; charset=utf-8)?$/;
 
