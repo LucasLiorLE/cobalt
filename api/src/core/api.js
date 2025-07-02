@@ -19,6 +19,7 @@ import { friendlyServiceName } from "../processing/service-alias.js";
 import { verifyStream } from "../stream/manage.js";
 import { createResponse, normalizeRequest, getIP } from "../processing/request.js";
 import { setupTunnelHandler } from "./itunnel.js";
+import { isDiscordBot, generateDiscordEmbed } from "../util/discord-embed.js";
 
 import * as APIKeys from "../security/api-keys.js";
 import * as Cookies from "../processing/cookie/manager.js";
@@ -311,6 +312,21 @@ export const runAPI = async (express, app, __dirname, isPrimary = true) => {
         const streamInfo = await verifyStream(id, sig, exp, sec, iv);
         if (!streamInfo?.service) {
             return res.status(streamInfo.status).end();
+        }
+
+        // Check if request is from Discord or other social media crawlers
+        const userAgent = req.get('User-Agent') || '';
+        const isBot = isDiscordBot(userAgent);
+        const noEmbed = req.query.no_embed === '1';
+
+        // If it's a bot request and not explicitly bypassed, return HTML with meta tags
+        if (isBot && !noEmbed) {
+            const fullTunnelUrl = `${req.protocol}://${req.get('host')}${req.originalUrl}`;
+            const html = generateDiscordEmbed(streamInfo, fullTunnelUrl);
+            
+            res.setHeader('Content-Type', 'text/html; charset=utf-8');
+            res.setHeader('Cache-Control', 'public, max-age=3600'); // Cache for 1 hour
+            return res.status(200).send(html);
         }
 
         if (streamInfo.type === 'proxy') {
