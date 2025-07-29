@@ -96,6 +96,10 @@ export function createResponse(responseType, responseData) {
                 }
                 break;
 
+            case "success":
+                response = responseData;
+                break;
+
             case "critical":
                 return internalError(responseData?.code);
 
