@@ -74,6 +74,12 @@ export const services = {
             "url_shortener/:shortLink"
         ],
     },
+    newgrounds: {
+        patterns: [
+            "portal/view/:id",
+            "audio/listen/:audioId",
+        ]
+    },
     reddit: {
         patterns: [
             "comments/:id",
@@ -201,7 +207,7 @@ export const services = {
         patterns: [
             "explore/:id?xsec_token=:token",
             "discovery/item/:id?xsec_token=:token",
-            "a/:shareId"
+            ":shareType/:shareId",
         ],
         altDomains: ["xhslink.com"],
     },

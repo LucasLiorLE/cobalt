@@ -53,14 +53,14 @@ importers:
         specifier: 2.6.0
         version: 2.6.0
       undici:
-        specifier: ^5.19.1
-        version: 5.28.4
+        specifier: ^6.21.3
+        version: 6.21.3
       url-pattern:
         specifier: 1.0.3
         version: 1.0.3
       youtubei.js:
-        specifier: ^14.0.0
-        version: 14.0.0
+        specifier: 15.0.1
+        version: 15.0.1
       zod:
         specifier: ^3.23.8
         version: 3.23.8
@@ -2080,6 +2080,10 @@ packages:
     resolution: {integrity: sha512-72RFADWFqKmUb2hmmvNODKL3p9hcB6Gt2DOQMis1SEBaV6a4MH8soBvzg+95CYhCKPFedut2JY9bMfrDl9D23g==}
     engines: {node: '>=14.0'}
 
+  undici@6.21.3:
+    resolution: {integrity: sha512-gBLkYIlEnSp8pFbT64yFgGE6UIB9tAkhukC23PmMDCe5Nd+cRqKxSjw5y54MK2AZMgZfJWMaNE4nYUHgi1XEOw==}
+    engines: {node: '>=18.17'}
+
   unist-util-stringify-position@2.0.3:
     resolution: {integrity: sha512-3faScn5I+hy9VleOq/qNbAd6pAx7iH5jYBMS9I1HgQVijz/4mv5Bvw5iw1sC/90CODiKo81G/ps8AJrISn687g==}
 
@@ -2181,8 +2185,8 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
 
-  youtubei.js@14.0.0:
-    resolution: {integrity: sha512-KAFttOw+9fwwBUvBc1T7KzMNBLczDOuN/dfote8BA9CABxgx8MPgV+vZWlowdDB6DnHjSUYppv+xvJ4VNBLK9A==}
+  youtubei.js@15.0.1:
+    resolution: {integrity: sha512-2slapqJS5NuXKHvcACEknyVz0AjH/TrXaOhDM0q2twQKa54kCmfj+7B/2nGfd20uzAe29zW1ejk2qOc4ABuGkg==}
 
   zimmerframe@1.1.2:
     resolution: {integrity: sha512-rAbqEGa8ovJy4pyBxZM70hg4pE6gDgaQ0Sl9M3enG3I0d6H4XSAM3GeNGLKnsBpuijUow064sf7ww1nutC5/3w==}
@@ -2396,7 +2400,8 @@ snapshots:
     dependencies:
       levn: 0.4.1
 
-  '@fastify/busboy@2.1.1': {}
+  '@fastify/busboy@2.1.1':
+    optional: true
 
   '@fontsource/ibm-plex-mono@5.0.13': {}
 
@@ -3960,6 +3965,9 @@ snapshots:
   undici@5.28.4:
     dependencies:
       '@fastify/busboy': 2.1.1
+    optional: true
+
+  undici@6.21.3: {}
 
   unist-util-stringify-position@2.0.3:
     dependencies:
@@ -4035,12 +4043,11 @@ snapshots:
 
   yocto-queue@0.1.0: {}
 
-  youtubei.js@14.0.0:
+  youtubei.js@15.0.1:
     dependencies:
       '@bufbuild/protobuf': 2.2.5
       jintr: 3.3.1
-      tslib: 2.6.3
-      undici: 5.28.4
+      undici: 6.21.3
 
   zimmerframe@1.1.2: {}
 
